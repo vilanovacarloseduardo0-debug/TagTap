@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789842627604,
+      "tag": "0000_create_guestbook_messages",
+      "breakpoints": true
+    }
+  ]
+}

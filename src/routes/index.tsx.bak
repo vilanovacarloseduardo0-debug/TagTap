@@ -1,0 +1,1526 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, type MouseEvent } from "react";
+import {
+  ArrowRight,
+  Battery,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ExternalLink,
+  Heart,
+  Grid,
+  Instagram,
+  MapPin,
+  MessageCircle,
+  Nfc,
+  Palette,
+  Phone,
+  Radio,
+  RotateCcw,
+  Send,
+  Share2,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Star,
+  TrendingUp,
+  UserCheck,
+  UserPlus,
+  Video,
+  Wifi,
+  Zap,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Placas NFC 8x8cm • TagTap | Google, Instagram, WhatsApp e Personalizadas" },
+      {
+        name: "description",
+        content: "Placas inteligentes NFC 8x8cm com simulação interativa no iPhone. Google Avaliações (Preta e Branca), Instagram, WhatsApp e Personalizadas. A partir de R$ 50,00!",
+      },
+      { property: "og:title", content: "Garanta sua Placa NFC 8x8cm • TagTap" },
+      {
+        property: "og:description",
+        content: "Conecte seus clientes com apenas 1 toque no celular. Modelos prontos e personalizados.",
+      },
+      { property: "og:type", content: "website" },
+    ],
+  }),
+  component: SalesShowcase,
+});
+
+const CONTACT = {
+  phoneDisplay: "(18) 99707-0824",
+  phoneRaw: "5518997070824",
+  email: "vilanovacarloseduardo0@gmail.com",
+  instagram: "@tagtapbr",
+  location: "Penápolis e Região",
+};
+
+function getWhatsAppUrl(message: string) {
+  return `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(message)}`;
+}
+
+const PRODUCTS = [
+  {
+    id: "google-preta",
+    name: "Placa Preta • Google Avaliações",
+    category: "Google Reviews",
+    badge: "Mais Vendido",
+    format: "8 x 8 cm",
+    color: "Preto Fosco + Cores Google",
+    tagline: "Avalie-nos no Google ★★★★★",
+    description: "Design sóbrio e moderno com fundo preto, logo oficial do Google e 5 estrelas em destaque. Combina com balcões de lojas, restaurantes, clínicas e barbearias.",
+    image: "/tagtap/placa-google-preta.jpg",
+    type: "google",
+    features: [
+      "Abre na hora a tela oficial de 5 estrelas do Google",
+      "Leitura instantânea por aproximação NFC",
+      "Bordas suaves e acabamento laminado de alta resistência",
+      "Já entregue 100% configurada com o link do seu negócio",
+    ],
+  },
+  {
+    id: "google-branca",
+    name: "Placa Branca • Google Avaliações",
+    category: "Google Reviews",
+    badge: "Alta Visibilidade",
+    format: "8 x 8 cm",
+    color: "Branco Clean + Azul Royal",
+    tagline: "Avalie-nos no Google ★★★★★",
+    description: "Design com contraste vibrante de onda azul e fundo branco. Impossível passar despercebida no balcão ou no caixa.",
+    image: "/tagtap/placa-google-branca.png",
+    type: "google",
+    features: [
+      "Máximo contraste visual em qualquer iluminação",
+      "Abre direto na avaliação 5 estrelas do seu perfil",
+      "Material impermeável resistente a respingos e limpezas",
+      "Sem bateria, sem recarga e sem mensalidade",
+    ],
+  },
+  {
+    id: "instagram",
+    name: "Placa Instagram • Siga Nossa Página",
+    category: "Redes Sociais",
+    badge: "Engajamento",
+    format: "8 x 8 cm",
+    color: "Degradê Oficial Instagram + Branco",
+    tagline: "Siga nossa página",
+    description: "Transforme visitantes presenciais em seguidores reais no seu Instagram. O cliente encosta o celular e cai direto no seu perfil pronto para seguir.",
+    image: "/tagtap/placa-instagram.jpg",
+    type: "instagram",
+    features: [
+      "Abre direto o perfil do seu Instagram no app do cliente",
+      "Multiplica seus seguidores orgânicos todos os dias",
+      "Ideal para lojas de roupas, estética, cafeterias e eventos",
+      "Pronta para uso imediato no balcão",
+    ],
+  },
+  {
+    id: "whatsapp",
+    name: "Placa WhatsApp • Salve Nosso Número",
+    category: "Atendimento & Vendas",
+    badge: "Conversão Direta",
+    format: "8 x 8 cm",
+    color: "Verde WhatsApp Oficial + Preto",
+    tagline: "Salva o nosso NÚMERO",
+    description: "Facilite o contato pós-venda, pedidos e orçamentos. O cliente aproxima o celular e abre a conversa no WhatsApp com o seu número salvo na hora.",
+    image: "/tagtap/placa-whatsapp.jpg",
+    type: "whatsapp",
+    features: [
+      "Inicia a conversa direta sem o cliente precisar digitar o número",
+      "Perfeito para suporte, delivery, encomendas e agendamentos",
+      "Acabamento durável e visual comercial marcante",
+      "Compatível com todos os smartphones modernos",
+    ],
+  },
+  {
+    id: "personalizada",
+    name: "Placa Personalizada • Sua Marca",
+    category: "Exclusiva sob Medida",
+    badge: "100% Personalizada",
+    format: "8 x 8 cm",
+    color: "Identidade Visual da sua Empresa",
+    tagline: "Sua Logo + Avaliação, WhatsApp e Instagram",
+    description: "Feita sob medida com a sua logomarca, suas cores e seus links! Exemplo do modelo exclusivo feito para a Saikoo Jiu Jitsu unindo avaliação Google, WhatsApp e Instagram na mesma placa.",
+    image: "/tagtap/placa-personalizada-saikoo.jpg",
+    type: "custom",
+    isCustom: true,
+    price: "R$ 100,00",
+    features: [
+      "Criada com a sua logomarca e identidade visual própria",
+      "Pode incluir múltiplos destinos (Google, WhatsApp, Instagram)",
+      "Acabamento VIP de alta categoria",
+      "Aprovação prévia da arte antes da produção",
+    ],
+  },
+];
+
+const PACKAGES = [
+  {
+    id: "1-placa",
+    title: "1 Placa Balcão",
+    subtitle: "Para começar a turbinar seu caixa",
+    price: "80,00",
+    unitPrice: null,
+    popular: false,
+    tag: "Individual",
+    items: [
+      "1x Placa Inteligente NFC 8x8cm",
+      "Escolha entre: Google Preta, Branca, Instagram ou WhatsApp",
+      "Configuração oficial inclusa",
+      "Material rígido com bordas arredondadas",
+      "Entrega rápida em Penápolis e Região",
+    ],
+    whatsappMsg: "Olá! Gostaria de encomendar 1 Placa NFC (R$ 80,00).",
+  },
+  {
+    id: "2-placas",
+    title: "2 Placas Comerciais",
+    subtitle: "Caixa + Balcão de atendimento",
+    price: "140,00",
+    unitPrice: "R$ 70 por placa (Economize R$ 20)",
+    popular: true,
+    tag: "Mais Escolhido",
+    items: [
+      "2x Placas Inteligentes NFC 8x8cm",
+      "Pode misturar modelos (Ex: 1 Google + 1 Instagram)",
+      "Configuração individual para cada link",
+      "Excelente para entrada e ponto de saída",
+      "Entrega prioritária em Penápolis",
+    ],
+    whatsappMsg: "Olá! Gostaria de aproveitar o combo de 2 Placas NFC por R$ 140,00.",
+  },
+  {
+    id: "3-placas",
+    title: "3 Placas Negócio",
+    subtitle: "Caixa + Balcão + Mesas / Vitrine",
+    price: "210,00",
+    unitPrice: "R$ 70 por placa",
+    popular: false,
+    tag: "Completo",
+    items: [
+      "3x Placas Inteligentes NFC 8x8cm",
+      "Combine modelos: Google, Instagram e WhatsApp",
+      "Ideal para estabelecimentos com múltiplos ambientes",
+      "Configuração e teste inclusos",
+      "Suporte direto na ativação",
+    ],
+    whatsappMsg: "Olá! Gostaria de encomendar 3 Placas NFC por R$ 210,00.",
+  },
+  {
+    id: "4-mais-placas",
+    title: "4 ou Mais Placas (+4x)",
+    subtitle: "Super atacado para salões, restaurantes e redes",
+    price: "50,00",
+    unitPrefix: "Apenas",
+    unitSuffix: "/ cada placa",
+    popular: false,
+    tag: "Super Preço Atacado",
+    highlightBadge: "R$ 50,00 cada!",
+    items: [
+      "A partir de 4 unidades: R$ 50,00 cada placa!",
+      "Economia máxima para cobrir todas as mesas",
+      "Multiplique dezenas de avaliações por dia",
+      "Misture qualquer um dos modelos do catálogo",
+      "Atendimento exclusivo e suporte prioritário",
+    ],
+    whatsappMsg: "Olá! Gostaria de fazer um pedido de 4 ou mais Placas NFC pelo valor de R$ 50,00 cada placa.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "O cliente precisa baixar algum aplicativo?",
+    a: "Não! Basta o cliente aproximar o celular da placa. O próprio sistema do aparelho (iPhone ou Android) reconhece o NFC automaticamente e abre a tela em menos de 2 segundos.",
+  },
+  {
+    q: "A placa precisa de bateria, tomada ou recarga?",
+    a: "Não precisa de nada disso. A tecnologia NFC é passiva, ou seja, ela é energizada instantaneamente pelo próprio campo de indução do celular no momento do toque. Dura anos sem manutenção.",
+  },
+  {
+    q: "Tem alguma mensalidade ou taxa de manutenção?",
+    a: "Zero! O pagamento é único na compra da placa. Não cobramos mensalidade nem cobranças adicionais.",
+  },
+  {
+    q: "Como funciona a Placa Personalizada por R$ 100,00?",
+    a: "Criamos a placa 100% personalizada com a logomarca da sua empresa, cores e o layout desejado (como o exemplo da Saikoo Jiu Jitsu, que reúne Google, WhatsApp e Instagram em uma só peça). Nós montamos a arte, você aprova e nós produzimos já configurada!",
+  },
+  {
+    q: "Posso misturar modelos nos pacotes de 2, 3 ou +4 placas?",
+    a: "Com certeza! Você pode escolher, por exemplo, 1 de Avaliação Google e 1 do Instagram, ou como preferir para o seu comércio.",
+  },
+  {
+    q: "Como funciona a entrega em Penápolis e Região?",
+    a: "Realizamos entrega rápida e suporte presencial/remoto em Penápolis e cidades vizinhas. Você recebe o produto pronto e testado em mãos.",
+  },
+];
+
+function SalesShowcase() {
+  const [selectedProductIndex, setSelectedProductIndex] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Phone Simulator state directly embedded in the Hero alongside the plate
+  const [phoneState, setPhoneState] = useState<"idle" | "connecting" | "screen" | "success">("idle");
+  const [userRating, setUserRating] = useState(5);
+  const [isFollowingInstagram, setIsFollowingInstagram] = useState(false);
+  const [whatsappMessaged, setWhatsappMessaged] = useState(false);
+
+  const currentProduct = PRODUCTS[selectedProductIndex];
+
+  const handlePrevModel = () => {
+    setSelectedProductIndex((prev) => (prev === 0 ? PRODUCTS.length - 1 : prev - 1));
+    setPhoneState("idle");
+    setIsFollowingInstagram(false);
+    setWhatsappMessaged(false);
+  };
+
+  const handleNextModel = () => {
+    setSelectedProductIndex((prev) => (prev === PRODUCTS.length - 1 ? 0 : prev + 1));
+    setPhoneState("idle");
+    setIsFollowingInstagram(false);
+    setWhatsappMessaged(false);
+  };
+
+  const handleSelectModel = (index: number) => {
+    setSelectedProductIndex(index);
+    setPhoneState("idle");
+    setIsFollowingInstagram(false);
+    setWhatsappMessaged(false);
+  };
+
+  const handleSimulateTap = () => {
+    if (phoneState === "connecting") return;
+    setPhoneState("connecting");
+    setTimeout(() => {
+      setPhoneState("screen");
+      const targetName =
+        currentProduct.type === "instagram"
+          ? "Perfil do Instagram"
+          : currentProduct.type === "whatsapp"
+          ? "Contato do WhatsApp"
+          : currentProduct.type === "custom"
+          ? "Linktree Saikoo Jiu Jitsu"
+          : "Avaliação 5 Estrelas no Google";
+      toast.success("Toque NFC Detectado!", {
+        description: `Abrindo ${targetName} no celular.`,
+      });
+    }, 700);
+  };
+
+  const handlePublishReview = () => {
+    setPhoneState("success");
+    toast.success("Avaliação 5 Estrelas Publicada!", {
+      description: "Sua avaliação foi contabilizada no Google Maps em 3 segundos.",
+    });
+  };
+
+  const handleToggleInstagramFollow = () => {
+    setIsFollowingInstagram((prev) => {
+      const next = !prev;
+      if (next) {
+        toast.success("Você agora segue @tagtapbr!", {
+          description: "Seguidor ganho instantaneamente no balcão da sua loja.",
+        });
+      }
+      return next;
+    });
+  };
+
+  const handleSendWhatsAppChat = () => {
+    setWhatsappMessaged(true);
+    toast.success("Conversa Iniciada no WhatsApp!", {
+      description: "O contato da sua empresa foi aberto diretamente no app.",
+    });
+  };
+
+  const handleResetPhone = () => {
+    setPhoneState("idle");
+    setUserRating(5);
+    setIsFollowingInstagram(false);
+    setWhatsappMessaged(false);
+  };
+
+  const scrollToSection = (e: MouseEvent<HTMLAnchorElement | HTMLButtonElement>, sectionId: string) => {
+    e.preventDefault();
+    const targetElement = document.getElementById(sectionId);
+    if (targetElement) {
+      const navOffset = 80;
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#070d04] text-[#f2f7ec] selection:bg-[#c8ff00] selection:text-[#091203]">
+      {/* Top Banner / Micro Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070d04]/85 border-b border-[#c8ff00]/15">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#c8ff00] flex items-center justify-center text-[#091203] font-black text-xl shadow-lg shadow-[#c8ff00]/30">
+              <Nfc className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="font-extrabold text-lg tracking-wider text-white flex items-center gap-1.5">
+                TAG<span className="text-[#c8ff00]">TAP</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest bg-[#182a0d] text-[#c8ff00] px-2 py-0.5 rounded-full border border-[#c8ff00]/30">
+                  NFC 8x8cm
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Navigation Links in the middle with smooth scroll animation */}
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 p-1 rounded-full bg-[#101b0a]/80 border border-[#c8ff00]/20">
+            <button
+              onClick={(e) => scrollToSection(e, "como-funciona")}
+              className="px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider font-bold text-[#b4cca4] hover:text-[#091203] hover:bg-[#c8ff00] transition-all duration-200 cursor-pointer"
+            >
+              Como Funciona
+            </button>
+            <button
+              onClick={(e) => scrollToSection(e, "modelos")}
+              className="px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider font-bold text-[#b4cca4] hover:text-[#091203] hover:bg-[#c8ff00] transition-all duration-200 cursor-pointer"
+            >
+              Modelos
+            </button>
+            <button
+              onClick={(e) => scrollToSection(e, "precos")}
+              className="px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider font-bold text-[#b4cca4] hover:text-[#091203] hover:bg-[#c8ff00] transition-all duration-200 cursor-pointer"
+            >
+              Tabela de Preços
+            </button>
+            <button
+              onClick={(e) => scrollToSection(e, "personalizada-destaque")}
+              className="px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider font-bold text-[#b4cca4] hover:text-[#091203] hover:bg-[#c8ff00] transition-all duration-200 cursor-pointer"
+            >
+              Personalizadas
+            </button>
+            <button
+              onClick={(e) => scrollToSection(e, "faq")}
+              className="px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider font-bold text-[#b4cca4] hover:text-[#091203] hover:bg-[#c8ff00] transition-all duration-200 cursor-pointer"
+            >
+              Dúvidas
+            </button>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-[#c8ff00] bg-[#14230a] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              <span className="w-2 h-2 rounded-full bg-[#c8ff00] animate-pulse"></span>
+              {CONTACT.location}
+            </span>
+            <a
+              href={getWhatsAppUrl("Olá! Gostaria de saber mais sobre as placas NFC 8x8cm para meu comércio.")}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 bg-[#c8ff00] hover:bg-[#b2e600] text-[#091203] px-3.5 py-1.5 rounded-full font-bold text-xs sm:text-sm tracking-tight transition-transform active:scale-95 shadow-md shadow-[#c8ff00]/20"
+            >
+              <MessageCircle className="w-4 h-4 fill-[#091203]" />
+              <span className="hidden xs:inline">WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-10 space-y-16 md:space-y-24">
+        
+        {/* ============================================================ */}
+        {/* HERO SECTION: PLACA NFC + IPHONE TITANIUM LADO A LADO        */}
+        {/* ============================================================ */}
+        <section className="relative">
+          {/* Ambient Glows */}
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#c8ff00]/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+          {/* Master Flyer Card */}
+          <div className="relative rounded-[2.5rem] p-6 sm:p-8 md:p-12 overflow-hidden border border-[#c8ff00]/25 shadow-2xl shadow-black/80 bg-gradient-to-b from-[#14230b] via-[#0d1607] to-[#080e04]">
+            
+            {/* The Signature Vibrant Lime Organic Shape Backdrop */}
+            <div className="absolute -bottom-24 -right-24 w-[380px] sm:w-[540px] md:w-[680px] h-[380px] sm:h-[540px] md:h-[680px] rounded-full bg-gradient-to-tr from-[#90d400] to-[#c8ff00] opacity-90 blur-sm pointer-events-none transform rotate-12 scale-110"></div>
+            
+            {/* Inner Dark Curve that creates the stylized fluid cutout of the reference */}
+            <div className="absolute -bottom-48 -right-48 w-[420px] sm:w-[580px] md:w-[700px] h-[420px] sm:h-[580px] md:h-[700px] rounded-[3.5rem] bg-[#0c1406]/85 pointer-events-none transform -rotate-12"></div>
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-center">
+              
+              {/* Left Column: Bold Typography & Direct Sales Pitch */}
+              <div className="lg:col-span-6 space-y-6">
+                
+                {/* Back / Tag Pills */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full bg-[#1e340e] text-[#c8ff00] border border-[#c8ff00]/30">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Placas Inteligentes 8x8cm
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-black/40 text-[#c8ff00] border border-[#c8ff00]/20">
+                    <Star className="w-3.5 h-3.5 fill-[#c8ff00]" />
+                    A partir de R$ 50,00 (+4x)
+                  </span>
+                </div>
+
+                {/* Big Headline styled like "Garanta seu Apple Watch!" */}
+                <div className="space-y-1">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] text-white">
+                    Garanta sua{" "}
+                    <span className="text-[#c8ff00] block drop-shadow-[0_0_35px_rgba(200,255,0,0.4)]">
+                      Placa NFC!
+                    </span>
+                  </h1>
+                  <p className="text-sm sm:text-base text-[#b8d1a3] max-w-xl font-normal pt-2 leading-relaxed">
+                    Os melhores preços do mercado para Penápolis e região. Aproxime o celular da placa ao lado e veja a tela do Google, Instagram, WhatsApp ou Linktree abrir em tempo real!
+                  </p>
+                </div>
+
+                {/* Bullets Highlight with Pricing */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-[#e0efd5]">
+                    <div className="w-5 h-5 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#070d04] shrink-0 font-bold">
+                      ✓
+                    </div>
+                    <span>1 Placa por R$ 80,00</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-[#e0efd5]">
+                    <div className="w-5 h-5 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#070d04] shrink-0 font-bold">
+                      ✓
+                    </div>
+                    <span>2 Placas por R$ 140,00</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-[#e0efd5]">
+                    <div className="w-5 h-5 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#070d04] shrink-0 font-bold">
+                      ✓
+                    </div>
+                    <span>3 Placas por R$ 210,00</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-[#e0efd5]">
+                    <div className="w-5 h-5 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#070d04] shrink-0 font-bold">
+                      ✓
+                    </div>
+                    <span>+4 Placas por R$ 50,00 cada!</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons with Smooth Scrolling */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    onClick={(e) => scrollToSection(e, "precos")}
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-[#c8ff00] hover:bg-[#b5e800] text-[#080f03] font-black text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#c8ff00]/30 hover:scale-[1.03] active:scale-95 cursor-pointer"
+                  >
+                    <span>Ver Preços & Kits</span>
+                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  </button>
+
+                  <button
+                    onClick={(e) => scrollToSection(e, "modelos")}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-[#182a0d]/90 hover:bg-[#203812] border border-[#c8ff00]/40 text-[#c8ff00] font-bold text-xs uppercase tracking-wider transition-all hover:scale-[1.02] cursor-pointer"
+                  >
+                    <span>Conhecer Modelos</span>
+                  </button>
+
+                  <button
+                    onClick={handleSimulateTap}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-[#c8ff00]/15 hover:bg-[#c8ff00]/25 border border-[#c8ff00]/50 text-[#c8ff00] font-bold text-xs uppercase tracking-wide transition-all cursor-pointer animate-pulse"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                    <span>Toque NFC no iPhone</span>
+                  </button>
+                </div>
+
+                {/* WhatsApp Contact Snippet in the Hero */}
+                <div className="pt-3 border-t border-[#c8ff00]/15 flex flex-wrap items-center gap-5">
+                  <a
+                    href={getWhatsAppUrl("Olá! Vim pelo site e gostaria de saber valores e modelos da placa TagTap.")}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 group"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-[#c8ff00] flex items-center justify-center text-[#080f03] group-hover:scale-105 transition-transform shadow-md shadow-[#c8ff00]/25">
+                      <Phone className="w-5 h-5 fill-[#080f03]" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] text-[#a2bd92] uppercase font-semibold">Entre em contato</p>
+                      <p className="text-base font-black text-white group-hover:text-[#c8ff00] transition-colors tracking-tight">
+                        {CONTACT.phoneDisplay}
+                      </p>
+                    </div>
+                  </a>
+
+                  <div className="flex items-center gap-2 text-xs text-[#9eb78f] bg-black/30 px-3 py-1.5 rounded-xl border border-white/5">
+                    <MapPin className="w-3.5 h-3.5 text-[#c8ff00]" />
+                    <span>{CONTACT.location}</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Column: DUO COMPOSTO PELA PLACA NFC DE CIMA + IPHONE TITANIUM LADO A LADO */}
+              <div className="lg:col-span-6 relative flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 min-h-[460px]">
+                
+                {/* Rotating Circular Stamp Seal */}
+                <div className="absolute -top-4 right-0 z-30 pointer-events-none hidden sm:block">
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
+                    <svg className="w-full h-full animate-spin-slow" viewBox="0 0 100 100">
+                      <path
+                        id="stampCirclePath"
+                        d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                        fill="none"
+                      />
+                      <text className="text-[7.6px] font-black tracking-[0.14em] fill-[#c8ff00] uppercase">
+                        <textPath href="#stampCirclePath">
+                          • PLACA INTELIGENTE NFC • 8X8CM • GOOGLE • INSTAGRAM
+                        </textPath>
+                      </text>
+                    </svg>
+                    <div className="absolute w-10 h-10 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#080e03] shadow-lg shadow-[#c8ff00]/40">
+                      <Nfc className="w-5 h-5 stroke-[2.5]" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1. PLACA DE CIMA (Sincronizada e interativa, com botões para trocar modelo aqui também) */}
+                <div className="relative z-10 flex flex-col items-center">
+                  
+                  {/* Floating Container */}
+                  <div className="animate-float-plate relative group">
+                    
+                    {/* The Active Top Plate Image with Smooth Transition */}
+                    <div
+                      key={`top-plate-${selectedProductIndex}`}
+                      onClick={handleSimulateTap}
+                      title="Clique na placa para aproximar do iPhone!"
+                      className="relative cursor-pointer transition-transform duration-300 hover:scale-105 animate-in fade-in duration-300"
+                    >
+                      <img
+                        src={currentProduct.image}
+                        alt={currentProduct.name}
+                        className="w-40 sm:w-48 md:w-52 h-auto rounded-2xl drop-shadow-[0_25px_30px_rgba(0,0,0,0.9)] border-2 border-[#c8ff00]/40 filter group-hover:border-[#c8ff00] transition-colors"
+                      />
+
+                      {/* Tap wave animation if connecting */}
+                      {phoneState === "connecting" && (
+                        <div className="absolute inset-0 rounded-2xl border-4 border-[#c8ff00] animate-ping pointer-events-none"></div>
+                      )}
+                    </div>
+
+                    {/* Navigation Arrow Left on Top Plate */}
+                    <button
+                      onClick={handlePrevModel}
+                      aria-label="Modelo anterior"
+                      className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/80 hover:bg-[#c8ff00] text-white hover:text-black border border-[#c8ff00]/40 flex items-center justify-center transition-all active:scale-90 shadow-lg cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4 stroke-[3]" />
+                    </button>
+
+                    {/* Navigation Arrow Right on Top Plate */}
+                    <button
+                      onClick={handleNextModel}
+                      aria-label="Próximo modelo"
+                      className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/80 hover:bg-[#c8ff00] text-white hover:text-black border border-[#c8ff00]/40 flex items-center justify-center transition-all active:scale-90 shadow-lg cursor-pointer"
+                    >
+                      <ChevronRight className="w-4 h-4 stroke-[3]" />
+                    </button>
+                  </div>
+
+                  {/* Top Plate Selector & Info Bar */}
+                  <div className="mt-3 text-center flex flex-col items-center gap-1">
+                    <button
+                      onClick={handleSimulateTap}
+                      className="inline-flex items-center gap-1 bg-[#0a1205]/95 text-[#c8ff00] text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-[#c8ff00]/40 shadow-md hover:bg-[#c8ff00] hover:text-black transition-colors cursor-pointer"
+                    >
+                      <Nfc className="w-3 h-3 animate-pulse" />
+                      <span>{currentProduct.name.split("•")[0]}</span>
+                    </button>
+                    <span className="text-[9px] text-[#8ea87f]">Use as setas para mudar o modelo</span>
+                  </div>
+                </div>
+
+                {/* 2. ITEM DIREITA: O IPHONE 16 PRO TITANIUM REALISTA (TELAS DINÂMICAS) */}
+                <div className="relative z-20 w-[240px] sm:w-[260px] shrink-0">
+                  
+                  {/* iPhone Titanium Chassis Frame */}
+                  <div className="relative rounded-[2.6rem] border-[5px] border-[#38332d] bg-[#121110] p-2 shadow-2xl ring-1 ring-[#8a765e]/40 ring-offset-2 ring-offset-black">
+                    
+                    {/* Hardware Side Buttons */}
+                    <div className="absolute -left-[7px] top-20 w-[3px] h-7 bg-[#4d443a] rounded-l-sm"></div>
+                    <div className="absolute -left-[7px] top-32 w-[3px] h-11 bg-[#4d443a] rounded-l-sm"></div>
+                    <div className="absolute -left-[7px] top-48 w-[3px] h-11 bg-[#4d443a] rounded-l-sm"></div>
+                    <div className="absolute -right-[7px] top-28 w-[3px] h-14 bg-[#4d443a] rounded-r-sm"></div>
+
+                    {/* iPhone Display Glass */}
+                    <div className="rounded-[2.1rem] bg-[#090f05] overflow-hidden min-h-[390px] flex flex-col justify-between border border-[#c8ff00]/15 relative">
+                      
+                      {/* Dynamic Island & Status Bar */}
+                      <div className="pt-2 px-4 pb-1">
+                        <div className="flex items-center justify-between text-[10px] font-semibold text-zinc-300">
+                          <span>9:41</span>
+                          
+                          {/* Dynamic Island Pill */}
+                          <div className="w-20 h-4.5 rounded-full bg-black flex items-center justify-between px-2 shadow-inner">
+                            <span className="w-2 h-2 rounded-full bg-zinc-900 border border-zinc-800"></span>
+                            <span className="w-2 h-2 rounded-full bg-blue-950/70 border border-blue-900/60"></span>
+                          </div>
+
+                          <div className="flex items-center gap-1 text-zinc-300">
+                            <Wifi className="w-2.5 h-2.5" />
+                            <Battery className="w-3 h-3 fill-current" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Screen Interactive Content */}
+                      <div className="p-3 flex-1 flex flex-col justify-center">
+                        
+                        {/* STATE 1: IDLE - AGUARDANDO APROXIMAÇÃO */}
+                        {phoneState === "idle" && (
+                          <div className="flex flex-col items-center justify-center text-center space-y-3 py-4 animate-in fade-in duration-300">
+                            <div className="w-14 h-14 rounded-full bg-[#182a0d] border border-[#c8ff00]/40 flex items-center justify-center text-[#c8ff00] shadow-lg shadow-[#c8ff00]/15">
+                              <Nfc className="w-7 h-7 animate-pulse" />
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-xs font-bold text-white">Aguardando aproximação...</p>
+                              <p className="text-[10px] text-[#9eb78f] px-2 leading-tight">
+                                Aproxime o celular ou clique na placa ao lado para testar.
+                              </p>
+                            </div>
+                            <Button
+                              onClick={handleSimulateTap}
+                              size="sm"
+                              className="bg-[#c8ff00] hover:bg-[#b2e600] text-[#080e03] font-black text-[11px] uppercase tracking-wider py-1 px-4 rounded-xl shadow-md cursor-pointer"
+                            >
+                              Aproximar Celular
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* STATE 2: CONNECTING / NFC READING */}
+                        {phoneState === "connecting" && (
+                          <div className="flex flex-col items-center justify-center text-center space-y-3 py-8 animate-in fade-in duration-150">
+                            <div className="relative">
+                              <div className="w-14 h-14 rounded-full bg-[#c8ff00]/20 flex items-center justify-center text-[#c8ff00]">
+                                <Radio className="w-8 h-8 animate-spin" />
+                              </div>
+                              <div className="absolute inset-0 rounded-full border-2 border-[#c8ff00] animate-ping"></div>
+                            </div>
+                            <p className="text-xs font-black text-[#c8ff00] tracking-wide">
+                              Lendo chip NFC...
+                            </p>
+                          </div>
+                        )}
+
+                        {/* STATE 3: SCREEN OPENED - TELA DINÂMICA DE ACORDO COM O MODELO DA PLACA */}
+                        {phoneState === "screen" && (
+                          <div className="animate-in fade-in zoom-in-95 duration-200">
+                            
+                            {/* CASE A: GOOGLE REVIEW SCREEN (PLACA PRETA OU BRANCA) */}
+                            {currentProduct.type === "google" && (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
+                                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white font-black text-xs shadow-sm">
+                                    <span className="text-blue-500">G</span>
+                                  </span>
+                                  <div className="text-left leading-none">
+                                    <p className="text-[11px] font-bold text-white">Sua Empresa</p>
+                                    <p className="text-[9px] text-[#9eb78f]">Avaliação no Google Maps</p>
+                                  </div>
+                                </div>
+
+                                <div className="text-center space-y-1">
+                                  <p className="text-[11px] font-semibold text-white">Como foi sua experiência?</p>
+                                  <div className="flex justify-center gap-1 py-1">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setUserRating(star)}
+                                        className="transition-transform hover:scale-125 cursor-pointer"
+                                      >
+                                        <Star
+                                          className={`w-5 h-5 ${
+                                            star <= userRating
+                                              ? "fill-[#FBBC05] text-[#FBBC05]"
+                                              : "text-zinc-700"
+                                          }`}
+                                        />
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <div className="rounded-xl border border-zinc-800 bg-[#121c0b]/90 p-2 text-left">
+                                    <p className="text-[9px] text-[#8ea87f] font-mono">Comentário rápido:</p>
+                                    <p className="text-[10px] text-white font-medium mt-0.5 leading-snug">
+                                      "Atendimento nota 10, super rápido e ambiente incrível! ⭐⭐⭐⭐⭐"
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <Button
+                                  onClick={handlePublishReview}
+                                  size="sm"
+                                  className="w-full bg-[#4285F4] hover:bg-blue-500 font-bold text-white text-[11px] py-1.5 rounded-lg shadow-md cursor-pointer"
+                                >
+                                  Publicar Avaliação
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* CASE B: INSTAGRAM PROFILE SCREEN */}
+                            {currentProduct.type === "instagram" && (
+                              <div className="space-y-2.5 text-left">
+                                <div className="flex items-center justify-between border-b border-zinc-800 pb-1.5">
+                                  <div className="flex items-center gap-1.5">
+                                    <Instagram className="w-4 h-4 text-pink-500" />
+                                    <span className="text-[11px] font-bold text-white tracking-tight">@suaempresa</span>
+                                  </div>
+                                  <span className="text-[9px] text-zinc-400 font-mono">Instagram</span>
+                                </div>
+
+                                {/* Profile info */}
+                                <div className="flex items-center gap-3">
+                                  <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600">
+                                    <div className="w-10 h-10 rounded-full bg-zinc-900 border-2 border-black flex items-center justify-center text-[10px] font-black text-white">
+                                      LOGO
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-2.5 text-center">
+                                    <div>
+                                      <p className="text-[11px] font-black text-white">142</p>
+                                      <p className="text-[8px] text-zinc-400">posts</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[11px] font-black text-white">12.8k</p>
+                                      <p className="text-[8px] text-zinc-400">seguidores</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[11px] font-black text-white">410</p>
+                                      <p className="text-[8px] text-zinc-400">seguindo</p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Bio */}
+                                <div className="space-y-0.5 text-[9px] leading-tight">
+                                  <p className="font-bold text-white">Sua Loja Oficial • Penápolis</p>
+                                  <p className="text-zinc-300">📍 Atendimento presencial & online</p>
+                                  <p className="text-blue-400 font-medium">linktr.ee/sualoja</p>
+                                </div>
+
+                                {/* Follow Button */}
+                                <div className="flex gap-1.5 pt-1">
+                                  <button
+                                    onClick={handleToggleInstagramFollow}
+                                    className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer ${
+                                      isFollowingInstagram
+                                        ? "bg-zinc-800 text-[#c8ff00] border border-[#c8ff00]/40"
+                                        : "bg-blue-600 hover:bg-blue-500 text-white"
+                                    }`}
+                                  >
+                                    {isFollowingInstagram ? (
+                                      <>
+                                        <UserCheck className="w-3 h-3" />
+                                        <span>Seguindo ✓</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <UserPlus className="w-3 h-3" />
+                                        <span>Seguir Perfil</span>
+                                      </>
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => toast.info("Mensagem direta aberta!")}
+                                    className="py-1 px-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-bold cursor-pointer"
+                                  >
+                                    Mensagem
+                                  </button>
+                                </div>
+
+                                {/* Grid preview */}
+                                <div className="grid grid-cols-3 gap-1 pt-1 opacity-80">
+                                  <div className="aspect-square rounded bg-gradient-to-br from-pink-900/40 to-purple-900/40 border border-white/5 flex items-center justify-center text-[7px] text-zinc-400">📸</div>
+                                  <div className="aspect-square rounded bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-white/5 flex items-center justify-center text-[7px] text-zinc-400">🔥</div>
+                                  <div className="aspect-square rounded bg-gradient-to-br from-blue-900/40 to-emerald-900/40 border border-white/5 flex items-center justify-center text-[7px] text-zinc-400">⭐</div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* CASE C: WHATSAPP CHAT / CONTACT SCREEN */}
+                            {currentProduct.type === "whatsapp" && (
+                              <div className="space-y-2.5 text-left">
+                                {/* WhatsApp header */}
+                                <div className="bg-[#0b2416] p-2 rounded-xl flex items-center justify-between border border-emerald-500/30">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center text-black font-black text-xs">
+                                      <MessageCircle className="w-4 h-4 fill-black" />
+                                    </div>
+                                    <div>
+                                      <p className="text-[11px] font-bold text-white leading-none">Sua Loja Atendimento</p>
+                                      <p className="text-[8px] text-emerald-400 leading-none mt-0.5 flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        online agora
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-emerald-400">
+                                    <Phone className="w-3.5 h-3.5" />
+                                    <Video className="w-3.5 h-3.5" />
+                                  </div>
+                                </div>
+
+                                {/* Chat message bubbles */}
+                                <div className="space-y-2 py-1">
+                                  <div className="bg-[#122319] border border-emerald-500/20 p-2.5 rounded-2xl rounded-tl-none max-w-[200px] text-[9.5px] text-zinc-200 leading-snug">
+                                    Olá! Seja muito bem-vindo(a) à nossa loja. 😊
+                                    <span className="block text-[7.5px] text-zinc-500 text-right mt-1">09:41</span>
+                                  </div>
+                                  <div className="bg-[#122319] border border-emerald-500/20 p-2.5 rounded-2xl rounded-tl-none max-w-[210px] text-[9.5px] text-zinc-200 leading-snug">
+                                    Como podemos te ajudar hoje? Toque abaixo para falar com nosso atendente!
+                                    <span className="block text-[7.5px] text-zinc-500 text-right mt-1">09:41</span>
+                                  </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="pt-1 space-y-1.5">
+                                  <button
+                                    onClick={handleSendWhatsAppChat}
+                                    className="w-full py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-black font-black text-[11px] flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer"
+                                  >
+                                    <Send className="w-3.5 h-3.5 fill-black" />
+                                    <span>{whatsappMessaged ? "Mensagem Enviada! ✓" : "Conversar no WhatsApp"}</span>
+                                  </button>
+                                  <p className="text-[8px] text-center text-zinc-400">
+                                    Número salvo na agenda automaticamente
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* CASE D: CUSTOM LINKTREE (SAIKOO JIU JITSU) */}
+                            {currentProduct.type === "custom" && (
+                              <div className="space-y-2.5 text-center">
+                                {/* Brand Emblem */}
+                                <div className="flex flex-col items-center">
+                                  <div className="w-12 h-12 rounded-full border-2 border-amber-400 overflow-hidden shadow-lg p-0.5 bg-black">
+                                    <img
+                                      src="/tagtap/placa-personalizada-saikoo.jpg"
+                                      alt="Saikoo"
+                                      className="w-full h-full object-cover rounded-full"
+                                    />
+                                  </div>
+                                  <h4 className="text-xs font-black text-white mt-1">Saikoo Jiu Jitsu</h4>
+                                  <p className="text-[8px] text-amber-300 font-medium">Penápolis / SP • Maior Equipe da Região</p>
+                                </div>
+
+                                {/* Linktree Custom Buttons */}
+                                <div className="space-y-1.5 pt-1 text-left">
+                                  
+                                  {/* Link 1: Google Reviews */}
+                                  <button
+                                    onClick={() => toast.success("Link do Google Reviews aberto!")}
+                                    className="w-full p-2 rounded-xl bg-[#121c0b] hover:bg-[#1a2b10] border border-amber-400/40 text-white flex items-center justify-between text-[10px] font-bold transition-all cursor-pointer group"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-blue-500 font-black text-[9px]">G</span>
+                                      <span>Avalie-nos no Google</span>
+                                    </div>
+                                    <div className="flex text-[#FBBC05] text-[9px]">★★★★★</div>
+                                  </button>
+
+                                  {/* Link 2: WhatsApp */}
+                                  <button
+                                    onClick={() => toast.success("WhatsApp da Saikoo aberto!")}
+                                    className="w-full p-2 rounded-xl bg-[#121c0b] hover:bg-[#1a2b10] border border-emerald-500/40 text-white flex items-center justify-between text-[10px] font-bold transition-all cursor-pointer group"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-5 h-5 rounded-full bg-[#25D366] flex items-center justify-center text-black">
+                                        <MessageCircle className="w-3 h-3 fill-black" />
+                                      </span>
+                                      <span>WhatsApp / Matrículas</span>
+                                    </div>
+                                    <ExternalLink className="w-3 h-3 text-emerald-400" />
+                                  </button>
+
+                                  {/* Link 3: Instagram */}
+                                  <button
+                                    onClick={() => toast.success("Instagram @saikoojiujitsu aberto!")}
+                                    className="w-full p-2 rounded-xl bg-[#121c0b] hover:bg-[#1a2b10] border border-pink-500/40 text-white flex items-center justify-between text-[10px] font-bold transition-all cursor-pointer group"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-500 to-pink-500 flex items-center justify-center text-white">
+                                        <Instagram className="w-3 h-3" />
+                                      </span>
+                                      <span>Instagram @saikoojiujitsu</span>
+                                    </div>
+                                    <ExternalLink className="w-3 h-3 text-pink-400" />
+                                  </button>
+
+                                </div>
+
+                                <p className="text-[7.5px] text-zinc-500 pt-0.5">
+                                  tagtap.link/saikoojiujitsu
+                                </p>
+                              </div>
+                            )}
+
+                          </div>
+                        )}
+
+                        {/* STATE 4: SUCCESS PUBLISHED */}
+                        {phoneState === "success" && (
+                          <div className="flex flex-col items-center justify-center text-center space-y-2 py-4 animate-in fade-in duration-200">
+                            <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                              <CheckCircle2 className="w-7 h-7" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-black text-white">Avaliação Publicada!</p>
+                              <p className="text-[10px] text-[#a0ba91] leading-tight mt-1">
+                                Sua nota 5.0 foi contabilizada no Google Meu Negócio em 3 segundos.
+                              </p>
+                            </div>
+                            <button
+                              onClick={handleResetPhone}
+                              className="inline-flex items-center gap-1 text-[10px] text-[#c8ff00] hover:underline pt-2 font-bold cursor-pointer"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              <span>Testar de novo</span>
+                            </button>
+                          </div>
+                        )}
+
+                      </div>
+
+                      {/* iOS Home Indicator Bar */}
+                      <div className="pb-1 pt-0.5">
+                        <div className="h-1 w-24 rounded-full bg-white/70 mx-auto"></div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* SEÇÃO 2: POR QUE SUA EMPRESA PRECISA DESSA PLACA NO BALCÃO  */}
+        {/* ============================================================ */}
+        <section id="como-funciona" className="space-y-8 scroll-mt-24">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-[#c8ff00] bg-[#172b0d] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              O Poder da Tecnologia NFC
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              Por que a Placa NFC <span className="text-[#c8ff00]">vende tanto?</span>
+            </h2>
+            <p className="text-sm sm:text-base text-[#a7bf96]">
+              A maioria dos clientes tem boa vontade de avaliar ou seguir sua página, mas desiste quando precisa digitar o nome da loja ou pesquisar. Com a placa, acabou a barreira.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div className="p-6 rounded-3xl bg-[#0f190a] border border-[#c8ff00]/15 space-y-4 hover:border-[#c8ff00]/40 transition-colors group">
+              <div className="w-12 h-12 rounded-2xl bg-[#c8ff00]/15 border border-[#c8ff00]/30 flex items-center justify-center text-[#c8ff00] group-hover:scale-110 transition-transform">
+                <Zap className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Toque em 2 Segundos</h3>
+              <p className="text-sm text-[#9eb78f] leading-relaxed">
+                Sem links complicados, sem digitação. O cliente aproxima o smartphone e a tela oficial do Google, Instagram ou WhatsApp abre na hora.
+              </p>
+              <div className="pt-2 text-xs font-bold text-[#c8ff00] flex items-center gap-1">
+                <span>+340% mais avaliações e seguidores</span>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-[#0f190a] border border-[#c8ff00]/15 space-y-4 hover:border-[#c8ff00]/40 transition-colors group">
+              <div className="w-12 h-12 rounded-2xl bg-[#c8ff00]/15 border border-[#c8ff00]/30 flex items-center justify-center text-[#c8ff00] group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Destaque na Cidade</h3>
+              <p className="text-sm text-[#9eb78f] leading-relaxed">
+                O algoritmo do Google prioriza empresas com avaliações recentes e notas altas. Sua empresa ganha credibilidade instantânea em Penápolis e região.
+              </p>
+              <div className="pt-2 text-xs font-bold text-[#c8ff00] flex items-center gap-1">
+                <span>Atrai novos clientes todos os dias</span>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-[#0f190a] border border-[#c8ff00]/15 space-y-4 hover:border-[#c8ff00]/40 transition-colors group">
+              <div className="w-12 h-12 rounded-2xl bg-[#c8ff00]/15 border border-[#c8ff00]/30 flex items-center justify-center text-[#c8ff00] group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Design & Durabilidade</h3>
+              <p className="text-sm text-[#9eb78f] leading-relaxed">
+                Formato quadrado 8x8cm com cantos arredondados suaves. Material rígido de alta resistência, impermeável e visual impecável.
+              </p>
+              <div className="pt-2 text-xs font-bold text-[#c8ff00] flex items-center gap-1">
+                <span>Resistente a respingos e limpezas diárias</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* SEÇÃO 3: CATÁLOGO OFICIAL COM NAVEGAÇÃO SUAVE                */}
+        {/* ============================================================ */}
+        <section id="modelos" className="space-y-8 scroll-mt-24">
+          <div className="space-y-2">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-[#c8ff00] bg-[#172b0d] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              Catálogo Oficial
+            </span>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                  Conheça os <span className="text-[#c8ff00]">Modelos Disponíveis</span>
+                </h2>
+                <p className="text-sm text-[#a7bf96] mt-1">
+                  Use as setas na imagem para alternar os modelos (a placa do topo e o iPhone acompanham a mudança).
+                </p>
+              </div>
+
+              {/* Counter Badge */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs uppercase font-bold tracking-wider text-[#b2cba1] bg-[#111e0c] px-3.5 py-1.5 rounded-full border border-[#c8ff00]/25">
+                  Modelo <strong className="text-[#c8ff00] font-black">{selectedProductIndex + 1}</strong> de {PRODUCTS.length}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Product Big Display Card with Natural Animation */}
+          <div className="p-6 sm:p-10 rounded-3xl bg-[#0d1607] border border-[#c8ff00]/25 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden shadow-2xl">
+            
+            {/* Visual Photo Area with Navigation Arrows */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-center p-4 sm:p-8 rounded-2xl bg-gradient-to-b from-[#16270d] to-[#091104] border border-[#c8ff00]/15 relative overflow-hidden group min-h-[380px]">
+              
+              {/* Badge Top Left */}
+              <div className="absolute top-3 left-3 z-20 text-[11px] font-extrabold uppercase px-3 py-1 rounded-full bg-[#c8ff00] text-[#080e03] shadow-md">
+                {currentProduct.badge}
+              </div>
+
+              {/* Price Tag Top Right if Custom */}
+              {currentProduct.isCustom && (
+                <div className="absolute top-3 right-3 z-20 text-[11px] font-black uppercase px-3 py-1 rounded-full bg-amber-400 text-black shadow-md">
+                  R$ 100,00
+                </div>
+              )}
+
+              {/* NAVIGATION ARROW LEFT */}
+              <button
+                onClick={handlePrevModel}
+                aria-label="Modelo anterior"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#080e03]/85 hover:bg-[#c8ff00] text-white hover:text-[#080e03] border border-[#c8ff00]/40 flex items-center justify-center transition-all duration-200 shadow-xl active:scale-90 backdrop-blur-md cursor-pointer group/btn"
+              >
+                <ChevronLeft className="w-6 h-6 stroke-[3] transition-transform group-hover/btn:-translate-x-0.5" />
+              </button>
+
+              {/* NAVIGATION ARROW RIGHT */}
+              <button
+                onClick={handleNextModel}
+                aria-label="Próximo modelo"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#080e03]/85 hover:bg-[#c8ff00] text-white hover:text-[#080e03] border border-[#c8ff00]/40 flex items-center justify-center transition-all duration-200 shadow-xl active:scale-90 backdrop-blur-md cursor-pointer group/btn"
+              >
+                <ChevronRight className="w-6 h-6 stroke-[3] transition-transform group-hover/btn:translate-x-0.5" />
+              </button>
+
+              {/* IMAGE DISPLAY CONTAINER (Clean Natural Transition) */}
+              <div
+                key={`cat-image-${selectedProductIndex}`}
+                className="w-full flex items-center justify-center animate-in fade-in zoom-in-95 duration-300"
+              >
+                <img
+                  src={currentProduct.image}
+                  alt={currentProduct.name}
+                  className="w-full max-w-[290px] sm:max-w-[320px] rounded-2xl h-auto object-contain drop-shadow-2xl transition-transform duration-300 hover:scale-105 border border-[#c8ff00]/30 shadow-2xl"
+                />
+              </div>
+
+              {/* Pagination Dots */}
+              <div className="flex items-center justify-center gap-2 pt-5 z-20">
+                {PRODUCTS.map((prod, idx) => (
+                  <button
+                    key={prod.id}
+                    onClick={() => handleSelectModel(idx)}
+                    aria-label={`Ir para ${prod.name}`}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      selectedProductIndex === idx
+                        ? "w-8 bg-[#c8ff00] shadow-md shadow-[#c8ff00]/50"
+                        : "w-2 bg-zinc-700 hover:bg-[#c8ff00]/50"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-3 text-xs font-semibold text-[#a8c297] flex flex-wrap justify-center items-center gap-2">
+                <span>Dimensão: 8x8cm</span>
+                <span>•</span>
+                <span>Bordas Arredondadas</span>
+                <span>•</span>
+                <span>Tecnologia NFC</span>
+              </div>
+            </div>
+
+            {/* Details Area */}
+            <div
+              key={`cat-details-${selectedProductIndex}`}
+              className="lg:col-span-6 space-y-6 animate-in fade-in duration-300"
+            >
+              <div>
+                <span className="text-xs uppercase font-extrabold tracking-wider text-[#c8ff00]">
+                  {currentProduct.category} • {currentProduct.format}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+                  {currentProduct.name}
+                </h3>
+                <p className="text-xs font-semibold text-[#8eb079] uppercase tracking-wide mt-1">
+                  {currentProduct.tagline}
+                </p>
+                <p className="text-sm text-[#b2cba1] mt-2 leading-relaxed">
+                  {currentProduct.description}
+                </p>
+              </div>
+
+              {/* Feature Checklist */}
+              <div className="space-y-2.5">
+                {currentProduct.features.map((feat, i) => (
+                  <div key={i} className="flex items-start gap-2.5 text-sm text-[#e0efd5]">
+                    <div className="w-5 h-5 rounded-full bg-[#c8ff00] flex items-center justify-center text-[#080e03] shrink-0 text-xs font-black mt-0.5">
+                      ✓
+                    </div>
+                    <span>{feat}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <a
+                  href={getWhatsAppUrl(`Olá! Gostaria de encomendar a ${currentProduct.name} (8x8cm).`)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#c8ff00] hover:bg-[#b2e600] text-[#080e03] font-black text-sm uppercase tracking-wider transition-all shadow-lg shadow-[#c8ff00]/25 active:scale-95"
+                >
+                  <MessageCircle className="w-4 h-4 fill-[#080e03]" />
+                  <span>Pedir Este Modelo</span>
+                </a>
+
+                <button
+                  onClick={handleSimulateTap}
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[#17290d] hover:bg-[#203712] border border-[#c8ff00]/30 text-[#c8ff00] font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  <Smartphone className="w-4 h-4" />
+                  <span>Testar no iPhone</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* SEÇÃO 4: TABELA OFICIAL DE PREÇOS                           */}
+        {/* ============================================================ */}
+        <section id="precos" className="space-y-8 scroll-mt-24">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-[#c8ff00] bg-[#172b0d] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              Valores Oficiais
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              Tabela de Preços & <span className="text-[#c8ff00]">Descontos Progressivos</span>
+            </h2>
+            <p className="text-sm sm:text-base text-[#a7bf96]">
+              Quanto mais placas você pedir para o seu negócio, menor fica o valor unitário. Sem mensalidades, pagamento único!
+            </p>
+          </div>
+
+          {/* 4 Packages Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+            {PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                className={`relative rounded-3xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-200 ${
+                  pkg.popular
+                    ? "bg-[#111e0c] border-2 border-[#c8ff00] shadow-2xl shadow-[#c8ff00]/20 md:-translate-y-2"
+                    : "bg-[#0c1407] border border-[#c8ff00]/20 hover:border-[#c8ff00]/40"
+                }`}
+              >
+                {pkg.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#c8ff00] text-[#080e03] font-black text-xs uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md whitespace-nowrap">
+                    ★ {pkg.tag}
+                  </div>
+                )}
+
+                <div className="space-y-3.5">
+                  <div>
+                    {!pkg.popular && (
+                      <span className="text-[10px] font-extrabold text-[#c8ff00] uppercase tracking-wider">
+                        {pkg.tag}
+                      </span>
+                    )}
+                    <h3 className="text-lg font-black text-white">{pkg.title}</h3>
+                    <p className="text-[11px] text-[#a0ba91] mt-0.5">{pkg.subtitle}</p>
+                  </div>
+
+                  <div className="py-1">
+                    <span className="text-[11px] text-[#a0ba91]">{pkg.unitPrefix || "Apenas"}</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-bold text-[#c8ff00]">R$</span>
+                      <span className="text-4xl font-black text-white">{pkg.price}</span>
+                      {pkg.unitSuffix && (
+                        <span className="text-xs font-bold text-[#c8ff00]">{pkg.unitSuffix}</span>
+                      )}
+                    </div>
+                    {pkg.unitPrice && (
+                      <span className="text-[10px] text-[#c8ff00] font-bold block mt-0.5">{pkg.unitPrice}</span>
+                    )}
+                    <span className="text-[10px] text-[#86a276]">Pagamento único</span>
+                  </div>
+
+                  <hr className="border-[#c8ff00]/15" />
+
+                  <div className="space-y-2">
+                    {pkg.items.map((item, idx) => (
+                      <div key={idx} className="flex items-start gap-1.5 text-xs text-[#d8e8cf]">
+                        <Check className="w-3.5 h-3.5 text-[#c8ff00] shrink-0 mt-0.5" />
+                        <span className="leading-tight">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-5">
+                  <a
+                    href={getWhatsAppUrl(pkg.whatsappMsg)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`w-full py-3 px-3 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                      pkg.popular
+                        ? "bg-[#c8ff00] hover:bg-[#b2e600] text-[#080e03] shadow-lg shadow-[#c8ff00]/25"
+                        : "bg-[#182a0e] hover:bg-[#203813] text-[#c8ff00] border border-[#c8ff00]/30"
+                    }`}
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                    <span>Pedir no WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Special Custom Plate Highlight Banner (R$ 100,00) */}
+          <div id="personalizada-destaque" className="rounded-3xl p-6 sm:p-10 bg-gradient-to-r from-[#17280d] via-[#111e0a] to-[#0a1205] border-2 border-amber-400/40 relative overflow-hidden shadow-2xl scroll-mt-24">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              
+              <div className="md:col-span-8 space-y-3">
+                <div className="inline-flex items-center gap-1.5 text-xs uppercase font-extrabold tracking-wider bg-amber-400 text-black px-3 py-1 rounded-full">
+                  <Palette className="w-3.5 h-3.5" />
+                  Placa Personalizada com a sua Marca
+                </div>
+                
+                <h3 className="text-2xl sm:text-4xl font-black text-white">
+                  Quer uma placa exclusiva com o seu logo?
+                </h3>
+                
+                <p className="text-sm text-[#b2cba1] leading-relaxed max-w-xl">
+                  Também fabricamos placas 100% personalizadas por apenas <strong className="text-amber-300 font-extrabold text-base">R$ 100,00</strong>. Podemos incluir sua logomarca oficial, cores institucionais e múltiplos atalhos (Avaliação Google ★★★★★, WhatsApp e Instagram) tudo na mesma placa!
+                </p>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex items-baseline gap-1 bg-black/40 px-4 py-2 rounded-xl border border-amber-400/30">
+                    <span className="text-xs text-amber-300 font-bold">Por apenas</span>
+                    <span className="text-2xl font-black text-white">R$ 100,00</span>
+                    <span className="text-[10px] text-[#86a276]">/ unidade</span>
+                  </div>
+
+                  <a
+                    href={getWhatsAppUrl("Olá! Gostaria de encomendar uma Placa NFC Personalizada com a logo da minha empresa (R$ 100,00).")}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-black" />
+                    <span>Quero Minha Placa Personalizada</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Photo Example (Saikoo) */}
+              <div className="md:col-span-4 flex flex-col items-center justify-center">
+                <div className="relative group cursor-pointer" onClick={() => handleSelectModel(4)}>
+                  <img
+                    src="/tagtap/placa-personalizada-saikoo.jpg"
+                    alt="Exemplo de Placa Personalizada Saikoo Jiu Jitsu"
+                    className="w-48 sm:w-56 h-auto rounded-2xl border-2 border-amber-400/50 shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-black/90 text-amber-300 text-[10px] font-extrabold uppercase px-3 py-0.5 rounded-full border border-amber-400/50 whitespace-nowrap">
+                    Exemplo: Saikoo Jiu Jitsu
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        {/* ============================================================ */}
+        {/* SEÇÃO 5: LOCAL & SUPORTE COM CARLOS TROFINO                  */}
+        {/* ============================================================ */}
+        <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#14230b] via-[#101c09] to-[#0a1205] border border-[#c8ff00]/25 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="space-y-3 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#c8ff00] bg-[#1a2e0e] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              <MapPin className="w-3.5 h-3.5" />
+              Atendimento Regional
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-white">
+              Atendemos Penápolis e Região
+            </h3>
+            <p className="text-sm text-[#b2cba1] leading-relaxed">
+              Você não precisa esperar semanas por encomendas que chegam desconfiguradas. Nós geramos o link oficial do seu negócio, gravamos na placa e entregamos pronta para uso imediato no seu balcão.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#c8ff00]">
+              <span>✓ Testado antes da entrega</span>
+              <span>✓ Suporte pelo WhatsApp</span>
+              <span>✓ Ativação sem complicação</span>
+            </div>
+          </div>
+
+          <div className="shrink-0 text-center md:text-right">
+            <a
+              href={getWhatsAppUrl("Olá Carlos! Gostaria de tirar dúvidas sobre as placas NFC em Penápolis.")}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#c8ff00] hover:bg-[#b2e600] text-[#080e03] font-black text-sm uppercase tracking-wider shadow-xl shadow-[#c8ff00]/25 hover:scale-105 active:scale-95 transition-all"
+            >
+              <MessageCircle className="w-5 h-5 fill-[#080e03]" />
+              <span>Chamar no WhatsApp</span>
+            </a>
+            <p className="text-[11px] text-[#86a276] mt-2 font-mono">{CONTACT.phoneDisplay}</p>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* SEÇÃO 6: PERGUNTAS FREQUENTES (FAQ)                         */}
+        {/* ============================================================ */}
+        <section id="faq" className="space-y-6 max-w-3xl mx-auto scroll-mt-24">
+          <div className="text-center space-y-2">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-[#c8ff00] bg-[#172b0d] px-3 py-1 rounded-full border border-[#c8ff00]/25">
+              Tire Suas Dúvidas
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
+              Perguntas Frequentes
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl bg-[#0d1607] border border-[#c8ff00]/15 overflow-hidden transition-colors hover:border-[#c8ff00]/30"
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white cursor-pointer"
+                  >
+                    <span>{faq.q}</span>
+                    <span className="text-[#c8ff00] shrink-0">
+                      {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 pb-5 sm:px-5 text-xs sm:text-sm text-[#b2cba1] leading-relaxed border-t border-[#c8ff00]/10 pt-3">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+      </main>
+
+      {/* ============================================================ */}
+      {/* FOOTER                                                      */}
+      {/* ============================================================ */}
+      <footer className="mt-20 border-t border-[#c8ff00]/15 bg-[#060a03] py-10 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#c8ff00] flex items-center justify-center text-[#080e03] font-black">
+              <Nfc className="w-4 h-4 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="font-black text-white text-base tracking-wider">
+                TAG<span className="text-[#c8ff00]">TAP</span>
+              </span>
+              <p className="text-[11px] text-[#7d976c]">
+                Placas Inteligentes NFC 8x8cm • Penápolis e Região
+              </p>
+            </div>
+          </div>
+
+          <div className="text-xs text-[#7d976c] space-y-1">
+            <p>Contato: {CONTACT.email} • {CONTACT.phoneDisplay}</p>
+            <p>© {new Date().getFullYear()} Carlos Eduardo Vilanova Trofino. Todos os direitos reservados.</p>
+          </div>
+
+          <div>
+            <a
+              href={getWhatsAppUrl("Olá! Gostaria de fazer meu pedido de placa NFC.")}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#172b0d] hover:bg-[#203a12] border border-[#c8ff00]/30 text-[#c8ff00] font-bold text-xs uppercase tracking-wider transition-all"
+            >
+              <MessageCircle className="w-3.5 h-3.5 fill-[#c8ff00]" />
+              <span>{CONTACT.phoneDisplay}</span>
+            </a>
+          </div>
+        </div>
+      </footer>
+
+      {/* ============================================================ */}
+      {/* BOTTOM CONVERSION FLOATING STICKY BAR                       */}
+      {/* ============================================================ */}
+      <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
+        <div className="pointer-events-auto bg-[#0a1205]/95 backdrop-blur-md border border-[#c8ff00]/40 rounded-full px-4 py-2.5 shadow-2xl shadow-black/80 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c8ff00] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-[#c8ff00]"></span>
+            </span>
+            <div className="text-left">
+              <p className="text-[11px] font-black text-white leading-none">Placas NFC 8x8cm</p>
+              <p className="text-[10px] text-[#c8ff00] font-medium leading-none mt-1">A partir de R$ 50,00</p>
+            </div>
+          </div>
+
+          <a
+            href={getWhatsAppUrl("Olá! Gostaria de pedir a minha Placa NFC 8x8cm agora.")}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#c8ff00] hover:bg-[#b5e800] text-[#080e03] font-black text-xs uppercase tracking-tight shadow-md shadow-[#c8ff00]/30 active:scale-95 transition-all"
+          >
+            <MessageCircle className="w-3.5 h-3.5 fill-[#080e03]" />
+            <span>Pedir no WhatsApp</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  );
+}
